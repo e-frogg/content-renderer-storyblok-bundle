@@ -9,12 +9,22 @@ class StoryblokLogger implements LoggerInterface
 {
     use LoggerTrait;
 
+    /**
+     * @var array
+     */
+    private $logs=[];
+
     public function log($level, string|\Stringable $message, array $context = [])
     {
-        // TODO : dataCollector + profiler bar....
-        dump(sprintf('[%s] : %s',$level,$message));
-        if(!empty($context)) {
-            dump($context);
-        }
+        // stores logs for rendering in the profiler bar
+        $this->logs[]=new LogEntry($level,$message,$context);
+    }
+
+    /**
+     * @return array
+     */
+    public function getLogs(): array
+    {
+        return $this->logs;
     }
 }

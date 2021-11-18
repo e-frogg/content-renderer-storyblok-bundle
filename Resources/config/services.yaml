@@ -38,3 +38,16 @@ services:
       - ['setContainer',['@service_container']]
     tags:
       - 'controller.service_arguments'
+
+  Efrogg\Bundle\StoryblokBundle\DataCollector\StoryblokDataCollector:
+    arguments:
+      - '@Efrogg\Bundle\StoryblokBundle\Log\StoryblokLogger'
+    tags:
+      -
+        name: data_collector
+        # must match the value returned by the getName() method
+        id: 'Efrogg\Bundle\StoryblokBundle\DataCollector\StoryblokDataCollector'
+        # optional template (it has more priority than the value returned by getTemplate())
+        template: '@Storyblok/collector/template.html.twig'
+        # optional priority (positive or negative integer; default = 0)
+        # priority: 300
