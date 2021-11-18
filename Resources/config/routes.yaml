@@ -1,0 +1,15 @@
+# config/routes.yaml
+
+#storybloks:
+#  resource: ../../Controller/
+#  prefix: '%storyblok.base-route%'
+#  type: annotation
+
+storyblok:
+  resource: '@StoryblokBundle/Controller'
+  prefix: '%storyblok.base-route%'
+  type: annotation
+
+#storyblok:
+#  resource: 'content_renderer.storyblok_route_loader::load'
+#  type: service

@@ -1,0 +1,40 @@
+parameters:
+  # directory in storyblok where pages are stored
+  storyblok.page-directory: 'pages/'
+  # default routing prefix for storyblok pages
+  storyblok.base-route: '/storyblok'
+
+  storyblok.api-keys:
+    preview: 'APSw5cAyyiC79sAk5CwWFAtt'    # test preview
+    public: 'M9YrD3u7og9hNNRa5OXzCgtt'    # test public
+#        preview: 'pIfdZp8Yx9pXZgn9eU4Cugtt'     # uba
+
+
+services:
+  # route loader
+  content_renderer.storyblok_route_loader:
+    class: 'Efrogg\Bundle\StoryblokBundle\Routing\RouteLoader'
+    calls:
+      - ['setBaseRoute',['%storyblok.base-route%']]
+      - ['setPageDirectory',['%storyblok.page-directory%']]
+    tags:
+    - 'routing.route_loader'
+
+  # node provider
+  content_renderer.storyblok_node_provider:
+    class: 'Efrogg\ContentRenderer\Connector\Storyblok\NodeProvider\StoryBlokNodeProvider'
+    arguments:
+      - '%storyblok.api-keys%'
+      - '@Efrogg\Bundle\StoryblokBundle\Log\StoryblokLogger'
+    tags: [!php/const Efrogg\ContentRenderer\Core\Resolver\ContainerTag::TAG_NODE_PROVIDER]
+
+  Efrogg\Bundle\StoryblokBundle\Log\StoryblokLogger:
+  Efrogg\Bundle\StoryblokBundle\Controller\StoryblokController:
+    arguments:
+      - '@Efrogg\ContentRenderer\CmsRenderer'
+      - '%storyblok.page-directory%'
+
+    calls:
+      - ['setContainer',['@service_container']]
+    tags:
+      - 'controller.service_arguments'
