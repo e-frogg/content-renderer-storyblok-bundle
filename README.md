@@ -1,4 +1,11 @@
 # story blok bundle
+## install
+    composer require efrogg/content-renderer-storyblok-bundle
+
+or composer.json
+
+    "efrogg/content-renderer-storyblok-bundle": "^0.1"
+
 ## add routes
 create `config/routes.yaml` file and add following content :
 
