@@ -28,6 +28,11 @@ services:
       - '@Efrogg\Bundle\StoryblokBundle\Log\StoryblokLogger'
     tags: [!php/const Efrogg\ContentRenderer\Core\Resolver\ContainerTag::TAG_NODE_PROVIDER]
 
+  # assets
+  content_renderer.storyblok.assetHandler:
+    class: 'Efrogg\ContentRenderer\Connector\Storyblok\Asset\StoryBlokAssetHandler'
+    tags: [!php/const Efrogg\ContentRenderer\Core\Resolver\ContainerTag::TAG_ASSET_HANDLER]
+
   Efrogg\Bundle\StoryblokBundle\Log\StoryblokLogger:
   Efrogg\Bundle\StoryblokBundle\Controller\StoryblokController:
     arguments:
