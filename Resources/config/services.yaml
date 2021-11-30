@@ -5,23 +5,27 @@ parameters:
   storyblok.base-route: '/storyblok'
 
   storyblok.api-keys:
-    preview: 'APSw5cAyyiC79sAk5CwWFAtt'    # test preview
-    public: 'M9YrD3u7og9hNNRa5OXzCgtt'    # test public
-#        preview: 'pIfdZp8Yx9pXZgn9eU4Cugtt'     # uba
+    preview: ''    # test preview
+    public: ''    # test public
+
+  storyblok.json-dumper:
+    write: false
+    read: false
+    dump-path: '%kernel.cache_dir%/cms/json'
 
 
 services:
   # route loader
-  content_renderer.storyblok_route_loader:
-    class: 'Efrogg\Bundle\StoryblokBundle\Routing\RouteLoader'
-    calls:
-      - ['setBaseRoute',['%storyblok.base-route%']]
-      - ['setPageDirectory',['%storyblok.page-directory%']]
-    tags:
-    - 'routing.route_loader'
+#  cms.storyblok_route_loader:
+#    class: 'Efrogg\Bundle\StoryblokBundle\Routing\RouteLoader'
+#    calls:
+#      - ['setBaseRoute',['%storyblok.base-route%']]
+#      - ['setPageDirectory',['%storyblok.page-directory%']]
+#    tags:
+#    - 'routing.route_loader'
 
   # node provider
-  content_renderer.storyblok_node_provider:
+  cms.storyblok_node_provider:
     class: 'Efrogg\ContentRenderer\Connector\Storyblok\NodeProvider\StoryBlokNodeProvider'
     arguments:
       - '%storyblok.api-keys%'
@@ -29,11 +33,12 @@ services:
     tags: [!php/const Efrogg\ContentRenderer\Core\Resolver\ContainerTag::TAG_NODE_PROVIDER]
 
   # assets
-  content_renderer.storyblok.assetHandler:
+  cms.storyblok.assetHandler:
     class: 'Efrogg\ContentRenderer\Connector\Storyblok\Asset\StoryBlokAssetHandler'
     tags: [!php/const Efrogg\ContentRenderer\Core\Resolver\ContainerTag::TAG_ASSET_HANDLER]
 
   Efrogg\Bundle\StoryblokBundle\Log\StoryblokLogger:
+
   Efrogg\Bundle\StoryblokBundle\Controller\StoryblokController:
     arguments:
       - '@Efrogg\ContentRenderer\CmsRenderer'
