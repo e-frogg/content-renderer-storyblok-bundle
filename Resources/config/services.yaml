@@ -1,63 +1,72 @@
 parameters:
-  # directory in storyblok where pages are stored
-  storyblok.page-directory: 'pages/'
-  # default routing prefix for storyblok pages
-  storyblok.base-route: '/storyblok'
+    # directory in storyblok where pages are stored
+    storyblok.page-directory: 'pages/'
+    # default routing prefix for storyblok pages
+    storyblok.base-route: '/storyblok'
 
-  storyblok.api-keys:
-    preview: ''    # test preview
-    public: ''    # test public
+    storyblok.api-keys:
+        preview: ''    # test preview
+        public: ''    # test public
 
-  storyblok.json-dumper:
-    write: false
-    read: false
-    dump-path: '%kernel.cache_dir%/cms/json'
+    storyblok.json-dumper:
+        write: false
+        read: false
+        dump-path: '%kernel.cache_dir%/cms/json'
+    cms.logger.service: 'cms.storyblok.logger'
 
 
 services:
-  # route loader
-#  cms.storyblok_route_loader:
-#    class: 'Efrogg\Bundle\StoryblokBundle\Routing\RouteLoader'
-#    calls:
-#      - ['setBaseRoute',['%storyblok.base-route%']]
-#      - ['setPageDirectory',['%storyblok.page-directory%']]
-#    tags:
-#    - 'routing.route_loader'
+    # route loader
+    #  cms.storyblok_route_loader:
+    #    class: 'Efrogg\Bundle\StoryblokBundle\Routing\RouteLoader'
+    #    calls:
+    #      - ['setBaseRoute',['%storyblok.base-route%']]
+    #      - ['setPageDirectory',['%storyblok.page-directory%']]
+    #    tags:
+    #    - 'routing.route_loader'
 
-  # node provider
-  cms.storyblok_node_provider:
-    class: 'Efrogg\ContentRenderer\Connector\Storyblok\NodeProvider\StoryBlokNodeProvider'
-    arguments:
-      - '%storyblok.api-keys%'
-      - '@Efrogg\Bundle\StoryblokBundle\Log\StoryblokLogger'
-    tags: [!php/const Efrogg\ContentRenderer\Core\Resolver\ContainerTag::TAG_NODE_PROVIDER]
+    # node provider
+    cms.storyblok_node_provider:
+        class: 'Efrogg\ContentRenderer\Connector\Storyblok\NodeProvider\StoryBlokNodeProvider'
+        arguments:
+            - '%storyblok.api-keys%'
+            - '@cms.storyblok.logger'
+        tags: [ !php/const Efrogg\ContentRenderer\Core\Resolver\ContainerTag::TAG_NODE_PROVIDER ]
 
-  # assets
-  cms.storyblok.assetHandler:
-    class: 'Efrogg\ContentRenderer\Connector\Storyblok\Asset\StoryBlokAssetHandler'
-    tags: [!php/const Efrogg\ContentRenderer\Core\Resolver\ContainerTag::TAG_ASSET_HANDLER]
+    # assets
+    cms.storyblok.assetHandler:
+        class: 'Efrogg\ContentRenderer\Connector\Storyblok\Asset\StoryBlokAssetHandler'
+        tags: [ !php/const Efrogg\ContentRenderer\Core\Resolver\ContainerTag::TAG_ASSET_HANDLER ]
 
-  Efrogg\Bundle\StoryblokBundle\Log\StoryblokLogger:
+    cms.storyblok.logger:
+        class: Efrogg\Bundle\StoryblokBundle\Log\StoryblokLogger
 
-  Efrogg\Bundle\StoryblokBundle\Controller\StoryblokController:
-    arguments:
-      - '@Efrogg\ContentRenderer\CmsRenderer'
-      - '%storyblok.page-directory%'
+    cms.storyblok.cache:
+        class: 'Efrogg\ContentRenderer\Cache\VarExporterCache'
+        arguments:
+            - '%cms.cache.storage-path%'
+            - '@cms.event_dispatcher'
+            - '@cms.storyblok.logger'
 
-    calls:
-      - ['setContainer',['@service_container']]
-    tags:
-      - 'controller.service_arguments'
 
-  Efrogg\Bundle\StoryblokBundle\DataCollector\StoryblokDataCollector:
-    arguments:
-      - '@Efrogg\Bundle\StoryblokBundle\Log\StoryblokLogger'
-    tags:
-      -
-        name: data_collector
-        # must match the value returned by the getName() method
-        id: 'Efrogg\Bundle\StoryblokBundle\DataCollector\StoryblokDataCollector'
-        # optional template (it has more priority than the value returned by getTemplate())
-        template: '@Storyblok/collector/template.html.twig'
-        # optional priority (positive or negative integer; default = 0)
-        # priority: 300
+    Efrogg\Bundle\StoryblokBundle\Controller\StoryblokController:
+        arguments:
+            - '@Efrogg\ContentRenderer\CmsRenderer'
+            - '%storyblok.page-directory%'
+
+        calls:
+            - [ 'setContainer',[ '@service_container' ] ]
+        tags:
+            - 'controller.service_arguments'
+
+    Efrogg\Bundle\StoryblokBundle\DataCollector\StoryblokDataCollector:
+        arguments:
+            - '@cms.storyblok.logger'
+        tags:
+            -   name: data_collector
+                # must match the value returned by the getName() method
+                id: 'Efrogg\Bundle\StoryblokBundle\DataCollector\StoryblokDataCollector'
+                # optional template (it has more priority than the value returned by getTemplate())
+                template: '@Storyblok/collector/template.html.twig'
+                # optional priority (positive or negative integer; default = 0)
+                # priority: 300

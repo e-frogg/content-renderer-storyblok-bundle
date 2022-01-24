@@ -31,7 +31,7 @@ class JsonDumperPass implements CompilerPassInterface
             $container->register('cms.storyblok_node_provider_json_dumper', JsonDumperNodeProvider::class)
                       ->addArgument($dumperConfiguration['dump-path'])
                       ->addMethodCall('setNodeProvider', [$definition])
-                      ->addMethodCall('setLogger', [new Reference(StoryblokLogger::class)])
+                      ->addMethodCall('setLogger', [new Reference('cms.storyblok.logger')])
 //             ->addMethodCall('addConverterDecorator', [new UTF8EncodeStringDecorator()])
                       ->addTag(ContainerTag::TAG_NODE_PROVIDER);
         }
@@ -41,7 +41,7 @@ class JsonDumperPass implements CompilerPassInterface
             $container->register('cms.storyblok_node_provider_json', SimpleJsonFileNodeProvider::class)
                       ->addArgument($dumperConfiguration['dump-path'])
 //             ->addMethodCall('addDecorator', [new UTF8DecodeStringDecorator()])
-                      ->addMethodCall('setLogger', [new Reference(StoryblokLogger::class)])
+                      ->addMethodCall('setLogger', [new Reference('cms.storyblok.logger')])
                       ->addTag(ContainerTag::TAG_NODE_PROVIDER);
         }
     }
