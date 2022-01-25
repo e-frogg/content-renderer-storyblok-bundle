@@ -33,6 +33,15 @@ services:
             - '@cms.storyblok.logger'
         tags: [ !php/const Efrogg\ContentRenderer\Core\Resolver\ContainerTag::TAG_NODE_PROVIDER ]
 
+    # en instance pour la compiler pass
+    cms.storyblok_node_provider_json_dumper:
+        class: 'Efrogg\ContentRenderer\NodeProvider\JsonDumperNodeProvider'
+        arguments:
+            - "@=container.getParameter('storyblok.json-dumper')['dump-path']"
+        calls:
+            - ['setNodeProvider',['@cms.storyblok_node_provider']]
+            - ['setLogger',['@cms.storyblok.logger']]
+
     # assets
     cms.storyblok.assetHandler:
         class: 'Efrogg\ContentRenderer\Connector\Storyblok\Asset\StoryBlokAssetHandler'
