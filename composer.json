@@ -10,7 +10,7 @@
   ],
   "require": {
     "php": ">=7.2",
-    "efrogg/content-renderer-storyblok": "^0.1",
+    "efrogg/content-renderer-storyblok": "^0.2",
     "psr/log": "*"
   },
   "require-dev": {
