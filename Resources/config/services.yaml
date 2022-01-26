@@ -9,10 +9,9 @@ parameters:
         public: ''    # test public
 
     storyblok.json-dumper:
-        write: false
-        read: false
+#        write: false
+#        read: false
         dump-path: '%kernel.cache_dir%/cms/json'
-    cms.logger.service: 'cms.storyblok.logger'
 
 
 services:
@@ -30,37 +29,46 @@ services:
         class: 'Efrogg\ContentRenderer\Connector\Storyblok\NodeProvider\StoryBlokNodeProvider'
         arguments:
             - '%storyblok.api-keys%'
-            - '@cms.storyblok.logger'
+            - '@cms.logger'
+        calls:
+            - ['setCache',['@cms.cache.json']]
         tags: [ !php/const Efrogg\ContentRenderer\Core\Resolver\ContainerTag::TAG_NODE_PROVIDER ]
 
     # en instance pour la compiler pass
-    cms.storyblok_node_provider_json_dumper:
-        class: 'Efrogg\ContentRenderer\NodeProvider\JsonDumperNodeProvider'
+#    cms.storyblok_node_provider_json_dumper:
+#        class: 'Efrogg\ContentRenderer\NodeProvider\JsonDumperNodeProvider'
+#        arguments:
+#            - "@=container.getParameter('storyblok.json-dumper')['dump-path']"
+#        calls:
+#            - ['setNodeProvider',['@cms.storyblok_node_provider']]
+#            - ['setLogger',['@cms.logger']]
+
+    cms.storyblok_node_provider_json:
+        class: Efrogg\ContentRenderer\NodeProvider\SimpleJsonFileNodeProvider
         arguments:
             - "@=container.getParameter('storyblok.json-dumper')['dump-path']"
         calls:
-            - ['setNodeProvider',['@cms.storyblok_node_provider']]
-            - ['setLogger',['@cms.storyblok.logger']]
+            - ['setLogger',['@cms.logger']]
+
+
 
     # assets
     cms.storyblok.assetHandler:
         class: 'Efrogg\ContentRenderer\Connector\Storyblok\Asset\StoryBlokAssetHandler'
         tags: [ !php/const Efrogg\ContentRenderer\Core\Resolver\ContainerTag::TAG_ASSET_HANDLER ]
 
-    cms.storyblok.logger:
-        class: Efrogg\Bundle\StoryblokBundle\Log\StoryblokLogger
 
     cms.storyblok.cache:
         class: 'Efrogg\ContentRenderer\Cache\VarExporterCache'
         arguments:
             - '%cms.cache.storage-path%'
             - '@cms.event_dispatcher'
-            - '@cms.storyblok.logger'
+            - '@cms.logger'
 
 
     Efrogg\Bundle\StoryblokBundle\Controller\StoryblokController:
         arguments:
-            - '@Efrogg\ContentRenderer\CmsRenderer'
+            - '@cms.renderer'
             - '%storyblok.page-directory%'
 
         calls:
@@ -68,14 +76,3 @@ services:
         tags:
             - 'controller.service_arguments'
 
-    Efrogg\Bundle\StoryblokBundle\DataCollector\StoryblokDataCollector:
-        arguments:
-            - '@cms.storyblok.logger'
-        tags:
-            -   name: data_collector
-                # must match the value returned by the getName() method
-                id: 'Efrogg\Bundle\StoryblokBundle\DataCollector\StoryblokDataCollector'
-                # optional template (it has more priority than the value returned by getTemplate())
-                template: '@Storyblok/collector/template.html.twig'
-                # optional priority (positive or negative integer; default = 0)
-                # priority: 300
