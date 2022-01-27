@@ -32,7 +32,10 @@ services:
             - '@cms.logger'
         calls:
             - ['setCache',['@cms.cache.json']]
-        tags: [ !php/const Efrogg\ContentRenderer\Core\Resolver\ContainerTag::TAG_NODE_PROVIDER ]
+        tags:
+            - 'cms.node_provider'
+            - 'cms.cache_clear.on_unpublish'
+
 
     # en instance pour la compiler pass
 #    cms.storyblok_node_provider_json_dumper:
