@@ -38,20 +38,27 @@ services:
             - 'cms.node_provider'
             - 'cms.cache_clear.on_unpublish'
 
-    cms.storyblok_node_provider_json:
+    cms.abstract_storyblok_node_provider_json:
+        abstract: true
         class: Efrogg\ContentRenderer\NodeProvider\SimpleJsonFileNodeProvider
         arguments:
             - "@=container.getParameter('storyblok.json-dumper')['dump-path']"
         calls:
             - ['setLogger',['@cms.logger']]
+    # to use JsonDumper as fallback :
+    # swef.storyblok_node_provider_json:
+    #   parent: cms.abstract_storyblok_node_provider_json
+    #   tags:
+    #       - { name: 'cms.node_provider', priority: -20 }
 
     # assets
     cms.storyblok.asset_handler:
         class: 'Efrogg\ContentRenderer\Connector\Storyblok\Asset\StoryBlokAssetHandler'
         tags:
-            - { name: 'cms.asset_handler',key: 1 }
+            - 'cms.asset_handler'
 
-    cms.storyblok_asset_handler_downloader:
+    cms.abstract_storyblok_asset_handler_downloader:
+        abstract: true
         class: 'Efrogg\ContentRenderer\Connector\Storyblok\Asset\AssetDownloader'
         arguments:
             - '%storyblok.assets_downloader.local_storage%'
@@ -59,6 +66,11 @@ services:
         calls:
             - ['setLogger',['@cms.logger']]
             - ['setAssetHandler',['@cms.storyblok.asset_handler']]
+    # to use AssetDownloader :
+    # swef.storyblok_asset_handler_downloader:
+    #    parent: cms.abstract_storyblok_asset_handler_downloader
+    #    tags:
+    #        - { name: 'cms.asset_handler', priority: 1 }
 
     cms.storyblok.cache:
         class: 'Efrogg\ContentRenderer\Cache\VarExporterCache'
