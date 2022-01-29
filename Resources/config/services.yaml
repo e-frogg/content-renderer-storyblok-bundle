@@ -3,6 +3,8 @@ parameters:
     storyblok.page-directory: 'pages/'
     # default routing prefix for storyblok pages
     storyblok.base-route: '/storyblok'
+    storyblok.assets_downloader.local_storage: '%shopware.filesystem.public.config.root%/cms-pictures/'
+    storyblok.assets_downloader.public_path: '/cms-pictures/'
 
     storyblok.api-keys:
         preview: ''    # test preview
@@ -36,16 +38,6 @@ services:
             - 'cms.node_provider'
             - 'cms.cache_clear.on_unpublish'
 
-
-    # en instance pour la compiler pass
-#    cms.storyblok_node_provider_json_dumper:
-#        class: 'Efrogg\ContentRenderer\NodeProvider\JsonDumperNodeProvider'
-#        arguments:
-#            - "@=container.getParameter('storyblok.json-dumper')['dump-path']"
-#        calls:
-#            - ['setNodeProvider',['@cms.storyblok_node_provider']]
-#            - ['setLogger',['@cms.logger']]
-
     cms.storyblok_node_provider_json:
         class: Efrogg\ContentRenderer\NodeProvider\SimpleJsonFileNodeProvider
         arguments:
@@ -53,13 +45,20 @@ services:
         calls:
             - ['setLogger',['@cms.logger']]
 
-
-
     # assets
-    cms.storyblok.assetHandler:
+    cms.storyblok.asset_handler:
         class: 'Efrogg\ContentRenderer\Connector\Storyblok\Asset\StoryBlokAssetHandler'
-        tags: [ !php/const Efrogg\ContentRenderer\Core\Resolver\ContainerTag::TAG_ASSET_HANDLER ]
+        tags:
+            - { name: 'cms.asset_handler',key: 1 }
 
+    cms.storyblok_asset_handler_downloader:
+        class: 'Efrogg\ContentRenderer\Connector\Storyblok\Asset\AssetDownloader'
+        arguments:
+            - '%storyblok.assets_downloader.local_storage%'
+            - '%storyblok.assets_downloader.public_path%'
+        calls:
+            - ['setLogger',['@cms.logger']]
+            - ['setAssetHandler',['@cms.storyblok.asset_handler']]
 
     cms.storyblok.cache:
         class: 'Efrogg\ContentRenderer\Cache\VarExporterCache'
