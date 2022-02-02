@@ -5,15 +5,15 @@ parameters:
     storyblok.base-route: '/storyblok'
     storyblok.assets_downloader.local_storage: '%shopware.filesystem.public.config.root%/cms-pictures/'
     storyblok.assets_downloader.public_path: '/cms-pictures/'
+    storyblok.assets_downloader.use: false
 
     storyblok.api-keys:
         preview: ''    # test preview
         public: ''    # test public
 
-    storyblok.json-dumper:
-#        write: false
-#        read: false
-        dump-path: '%kernel.cache_dir%/cms/json'
+    storyblok.json-dumper.dump-path: '%kernel.cache_dir%/cms/json'
+    # low priority to be used as fallback
+    storyblok.json-dumper.use: false
 
 
 services:
@@ -38,27 +38,22 @@ services:
             - 'cms.node_provider'
             - 'cms.cache_clear.on_unpublish'
 
-    cms.abstract_storyblok_node_provider_json:
-        abstract: true
+    cms.storyblok_node_provider_json_fallback:
         class: Efrogg\ContentRenderer\NodeProvider\SimpleJsonFileNodeProvider
         arguments:
-            - "@=container.getParameter('storyblok.json-dumper')['dump-path']"
+            - "%storyblok.json-dumper.dump-path%"
         calls:
             - ['setLogger',['@cms.logger']]
-    # to use JsonDumper as fallback :
-    # swef.storyblok_node_provider_json:
-    #   parent: cms.abstract_storyblok_node_provider_json
-    #   tags:
-    #       - { name: 'cms.node_provider', priority: -20 }
+        # tag and priority are defined at CompilerPass
+        # depending on parameter "storyblok.json-dumper.use"
 
     # assets
+    # tag will be set to one handler only at CompilerPass
+    # depending on parameter "storyblok.assets_downloader.use"
     cms.storyblok.asset_handler:
         class: 'Efrogg\ContentRenderer\Connector\Storyblok\Asset\StoryBlokAssetHandler'
-        tags:
-            - 'cms.asset_handler'
 
-    cms.abstract_storyblok_asset_handler_downloader:
-        abstract: true
+    cms.storyblok.cached_asset_handler:
         class: 'Efrogg\ContentRenderer\Connector\Storyblok\Asset\AssetDownloader'
         arguments:
             - '%storyblok.assets_downloader.local_storage%'
@@ -66,11 +61,6 @@ services:
         calls:
             - ['setLogger',['@cms.logger']]
             - ['setAssetHandler',['@cms.storyblok.asset_handler']]
-    # to use AssetDownloader :
-    # swef.storyblok_asset_handler_downloader:
-    #    parent: cms.abstract_storyblok_asset_handler_downloader
-    #    tags:
-    #        - { name: 'cms.asset_handler', priority: 1 }
 
     cms.storyblok.cache:
         class: 'Efrogg\ContentRenderer\Cache\VarExporterCache'
