@@ -6,7 +6,7 @@ parameters:
     storyblok.assets_downloader.local_storage: '%shopware.filesystem.public.config.root%/cms-pictures/'
     storyblok.assets_downloader.public_path: '/cms-pictures/'
     storyblok.assets_downloader.use: false
-
+    storyblok.max_retries: 3
     storyblok.api-keys:
         preview: ''    # test preview
         public: ''    # test public
@@ -34,6 +34,7 @@ services:
             - '@cms.logger'
         calls:
             - ['setCache',['@cms.cache.json']]
+            - ['setMaxRetries',['%storyblok.max_retries%']]
         tags:
             - 'cms.node_provider'
             - 'cms.cache_clear.on_unpublish'
