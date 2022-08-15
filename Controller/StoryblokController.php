@@ -3,22 +3,19 @@
 namespace Efrogg\Bundle\StoryblokBundle\Controller;
 
 use Efrogg\ContentRenderer\CmsRenderer;
+use Efrogg\ContentRenderer\Exception\NodeNotFoundException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class StoryblokController extends AbstractController
 {
 
-    /**
-     * @var CmsRenderer
-     */
-    protected $cmsRenderer;
-    /**
-     * @var string
-     */
-    protected $pagePath;
+    protected CmsRenderer $cmsRenderer;
+    protected string $pagePath;
+    protected string $defaultHomePath = 'home';
 
     public function __construct(CmsRenderer $cmsRenderer, string $pagePath = '')
     {
@@ -27,9 +24,8 @@ class StoryblokController extends AbstractController
     }
 
 
-
     /**
-     * @Route("/_preview/{path}", requirements={"path"=".+"})
+     * @Route("/_preview/{path}", requirements={"path"=".+"},priority=-5)
      * @param Request $request
      * @param string  $path
      *
@@ -37,9 +33,7 @@ class StoryblokController extends AbstractController
      */
     public function renderPreview(Request $request, string $path): Response
     {
-        $response = $this->render('cmsBase.html.twig', [
-            'pageContent' => $this->cmsRenderer->renderNodeById($path)
-        ]);
+        $response = new Response($this->cmsRenderer->renderNodeById($path));
 
         $response->headers->add([
             'Content-Security-Policy' => 'frame-ancestors app.storyblok.com;',
@@ -48,7 +42,9 @@ class StoryblokController extends AbstractController
     }
 
     /**
-     * @Route("/{path}", requirements={"path"=".+"})
+     * low priority to get after all other routes
+     * @Route("/{path}", requirements={"path"=".*"},priority=-5)
+     *
      * @param Request $request
      * @param string  $path
      *
@@ -56,8 +52,14 @@ class StoryblokController extends AbstractController
      */
     public function renderPage(Request $request, string $path): Response
     {
-        return $this->render('cmsBase.html.twig', [
-            'pageContent' => $this->cmsRenderer->renderNodeById($this->pagePath . $path)
-        ]);
+        if (empty($path)) {
+            $path = $this->defaultHomePath;
+        }
+        try {
+            $node = $this->cmsRenderer->getNodeProvider()->getNodeById($this->pagePath . $path);
+            return new Response($this->cmsRenderer->render($node));
+        } catch (NodeNotFoundException $e) {
+            throw new NotFoundHttpException($e->getMessage(), $e);
+        }
     }
 }
