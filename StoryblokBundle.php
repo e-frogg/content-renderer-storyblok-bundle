@@ -15,6 +15,7 @@ use Efrogg\Bundle\StoryblokBundle\DependencyInjection\Compiler\JsonDumperPass;
 use Efrogg\Bundle\StoryblokBundle\DependencyInjection\CompilerPass\StoryblokCompilerPass;
 use Efrogg\Bundle\StoryblokBundle\DependencyInjection\StoryblokExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -29,7 +30,7 @@ class StoryblokBundle extends Bundle
         $container->addCompilerPass(New StoryblokCompilerPass());
     }
 
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return new StoryblokExtension();
     }
