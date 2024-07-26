@@ -3,12 +3,12 @@
 #storybloks:
 #  resource: ../../Controller/
 #  prefix: '%storyblok.base-route%'
-#  type: annotation
+#  type: attribute
 
 storyblok:
   resource: '@StoryblokBundle/Controller'
   prefix: '%storyblok.base-route%'
-  type: annotation
+  type: attribute
 
 #storyblok:
 #  resource: 'content_renderer.storyblok_route_loader::load'
