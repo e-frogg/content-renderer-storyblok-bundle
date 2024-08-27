@@ -14,7 +14,7 @@ class StoryblokCompilerPass implements CompilerPassInterface
     /**
      * @inheritDoc
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         # asset downloader
         $useStoryblokAssetDownloader = $container->getParameter('storyblok.assets_downloader.use');
