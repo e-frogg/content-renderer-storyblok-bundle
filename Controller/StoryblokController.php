@@ -2,7 +2,7 @@
 
 namespace Efrogg\Bundle\StoryblokBundle\Controller;
 
-use Efrogg\ContentRenderer\CmsRenderer;
+use Efrogg\ContentRenderer\CmsRendererInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,7 +12,7 @@ class StoryblokController extends AbstractController
 {
 
     /**
-     * @var CmsRenderer
+     * @var CmsRendererInterface
      */
     protected $cmsRenderer;
     /**
@@ -20,7 +20,7 @@ class StoryblokController extends AbstractController
      */
     protected $pagePath;
 
-    public function __construct(CmsRenderer $cmsRenderer, string $pagePath = '')
+    public function __construct(CmsRendererInterface $cmsRenderer, string $pagePath = '')
     {
         $this->cmsRenderer = $cmsRenderer;
         $this->pagePath = $pagePath;
