@@ -1,21 +1,3 @@
-parameters:
-    # directory in storyblok where pages are stored
-    storyblok.page-directory: 'pages/'
-    # default routing prefix for storyblok pages
-    storyblok.base-route: '/storyblok'
-    storyblok.assets_downloader.local_storage: '%shopware.filesystem.public.config.root%/cms-pictures/'
-    storyblok.assets_downloader.public_path: '/cms-pictures/'
-    storyblok.assets_downloader.use: false
-    storyblok.max_retries: 3
-    storyblok.api-keys:
-        preview: ''    # test preview
-        public: ''    # test public
-
-    storyblok.json-dumper.dump-path: '%kernel.cache_dir%/cms/json'
-    # low priority to be used as fallback
-    storyblok.json-dumper.use: false
-
-
 services:
     # route loader
     #  cms.storyblok_route_loader:
@@ -71,12 +53,10 @@ services:
             - '@cms.event_dispatcher'
             - '@cms.logger'
 
-
     Efrogg\Bundle\StoryblokBundle\Controller\StoryblokController:
         arguments:
             - '@cms.renderer'
             - '%storyblok.page-directory%'
-
         calls:
             - [ 'setContainer',[ '@service_container' ] ]
         tags:
