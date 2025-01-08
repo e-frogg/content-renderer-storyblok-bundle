@@ -3,21 +3,25 @@ services:
     #  cms.storyblok_route_loader:
     #    class: 'Efrogg\Bundle\StoryblokBundle\Routing\RouteLoader'
     #    calls:
-    #      - ['setBaseRoute',['%storyblok.base-route%']]
-    #      - ['setPageDirectory',['%storyblok.page-directory%']]
+    #      - ['setBaseRoute',['@storyblok.config.getBaseRoute()']]
+    #      - ['setPageDirectory',['@storyblok.config.getPagesDirectory()']]
     #    tags:
     #    - 'routing.route_loader'
+
+    storyblok.config:
+        class: Efrogg\Bundle\StoryblokBundle\DependencyInjection\StoryblokConfig
+        public: true
 
     # node provider
     cms.storyblok_node_provider:
         class: 'Efrogg\ContentRenderer\Connector\Storyblok\NodeProvider\StoryBlokNodeProvider'
         arguments:
-            - '%storyblok.api-keys%'
-            - '@event_dispatcher'
-            - '@cms.logger'
+            $apiKeys: '@=service("storyblok.config").getApiKeys()'
+            $eventDispatcher: '@event_dispatcher'
+            $logger: '@cms.logger'
         calls:
             - ['setCache',['@cms.cache.json']]
-            - ['setMaxRetries',['%storyblok.max_retries%']]
+            - ['setMaxRetries',['@=service("storyblok.config").getApiMaxRetries()']]
         tags:
             - 'cms.node_provider'
             - 'cms.cache_clear.on_unpublish'
@@ -25,7 +29,7 @@ services:
     cms.storyblok_node_provider_json_fallback:
         class: Efrogg\ContentRenderer\NodeProvider\SimpleJsonFileNodeProvider
         arguments:
-            - "%storyblok.json-dumper.dump-path%"
+            $rootPath: '@=service("storyblok.config").getJsonDumperPath()'
         calls:
             - ['setLogger',['@cms.logger']]
         # tag and priority are defined at CompilerPass
@@ -40,8 +44,8 @@ services:
     cms.storyblok.cached_asset_handler:
         class: 'Efrogg\ContentRenderer\Connector\Storyblok\Asset\AssetDownloader'
         arguments:
-            - '%storyblok.assets_downloader.local_storage%'
-            - '%storyblok.assets_downloader.public_path%'
+            $baseStoragePath: '@=service("storyblok.config").getAssetsLocalStorage()'
+            $basePublicPath: '@=service("storyblok.config").getAssetsPublicPath()'
         calls:
             - ['setLogger',['@cms.logger']]
             - ['setAssetHandler',['@cms.storyblok.asset_handler']]
@@ -55,8 +59,8 @@ services:
 
     Efrogg\Bundle\StoryblokBundle\Controller\StoryblokController:
         arguments:
-            - '@cms.renderer'
-            - '%storyblok.page-directory%'
+            $cmsRenderer: '@cms.renderer'
+            $pagePath: '@=service("storyblok.config").getPagesDirectory()'
         calls:
             - [ 'setContainer',[ '@service_container' ] ]
         tags:
