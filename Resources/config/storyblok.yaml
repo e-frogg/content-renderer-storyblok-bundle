@@ -17,3 +17,6 @@ storyblok:
         json_dumper:
             use: false
             dump_path: '%kernel.cache_dir%/cms/json'
+    demo:
+        folder: 'demo'
+        key: '%env(STORYBLOK_DEMO_TOKEN)%'

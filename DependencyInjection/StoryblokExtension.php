@@ -20,6 +20,7 @@ class StoryblokExtension extends Extension
 
         // usefull for the base route (route.yaml)
         $container->setParameter('storyblok.base-route', $config['pages']['base_route']);
+        $container->setParameter('storyblok.demo-folder', $config['demo']['folder']);
 
         $container->setDefinition(
             'storyblok.config',

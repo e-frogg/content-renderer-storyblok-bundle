@@ -1,3 +1,6 @@
+parameters:
+    env(STORYBLOK_DEMO_TOKEN): 'demo-token'
+
 services:
     # route loader
     #  cms.storyblok_route_loader:

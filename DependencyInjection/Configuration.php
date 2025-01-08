@@ -62,9 +62,16 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('demo')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('key')->defaultValue('')->end()
+                        ->scalarNode('folder')->defaultValue('')->end()
+                    ->end()
+                ->end()
             ->end()
         ;
 
         return $treeBuilder;
     }
-} 
+}
