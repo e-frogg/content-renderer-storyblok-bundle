@@ -6,7 +6,7 @@ storyblok:
     assets:
         downloader:
             use: false
-            local_storage: '%shopware.filesystem.public.config.root%/cms-pictures/'
+            local_storage: '%storyblok_storage_root%/cms-pictures/'
             public_path: '/cms-pictures/'
     api:
         max_retries: 3

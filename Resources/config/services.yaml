@@ -1,5 +1,6 @@
 parameters:
     env(STORYBLOK_DEMO_TOKEN): 'demo-token'
+    storyblok_storage_root: 'env(STORYBLOK_STORAGE_ROOT)'
 
 services:
     # route loader

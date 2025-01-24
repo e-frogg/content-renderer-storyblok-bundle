@@ -31,7 +31,7 @@ class Configuration implements ConfigurationInterface
                             ->addDefaultsIfNotSet()
                             ->children()
                                 ->booleanNode('use')->defaultFalse()->end()
-                                ->scalarNode('local_storage')->defaultValue('%shopware.filesystem.public.config.root%/cms-pictures/')->end()
+                                ->scalarNode('local_storage')->defaultValue('%storyblok_storage_root%/cms-pictures/')->end()
                                 ->scalarNode('public_path')->defaultValue('/cms-pictures/')->end()
                             ->end()
                         ->end()
