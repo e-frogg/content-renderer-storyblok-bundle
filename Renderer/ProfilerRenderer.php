@@ -51,13 +51,13 @@ class ProfilerRenderer implements CmsRendererInterface
         $this->decorated->restoreUpdateCache();
     }
 
-    public function convertAndRender($data): ?string
+    public function convertAndRender($data,  ?array $additionalData = []): ?string
     {
-        return $this->decorated->convertAndRender($data);
+        return $this->decorated->convertAndRender($data, $additionalData);
     }
 
-    public function convertAndRenderMultiple($data): ?string
+    public function convertAndRenderMultiple($data, ?array $additionalData = []): ?string
     {
-        return $this->decorated->convertAndRenderMultiple($data);
+        return $this->decorated->convertAndRenderMultiple($data, $additionalData);
     }
 }
