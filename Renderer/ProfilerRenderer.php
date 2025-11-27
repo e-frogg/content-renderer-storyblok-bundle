@@ -15,8 +15,7 @@ class ProfilerRenderer implements CmsRendererInterface
     ) {
     }
 
-
-    public function renderNodeById(string $nodeId, string $subNode = null): string
+    public function renderNodeById(string $nodeId, ?string $subNode = null): string
     {
         return $this->decorated->renderNodeById($nodeId, $subNode);
     }
@@ -51,7 +50,7 @@ class ProfilerRenderer implements CmsRendererInterface
         $this->decorated->restoreUpdateCache();
     }
 
-    public function convertAndRender($data,  ?array $additionalData = []): ?string
+    public function convertAndRender($data, ?array $additionalData = []): ?string
     {
         return $this->decorated->convertAndRender($data, $additionalData);
     }
