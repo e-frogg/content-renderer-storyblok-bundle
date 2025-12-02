@@ -4,13 +4,13 @@
   "homepage":     "https://www.e-frogg.com",
   "keywords":     ["CMS"],
   "license":      "MIT",
-  "version":      "3.1.1",
+  "version":      "3.1.2",
   "authors": [
     {"name": "Raphaël HOMANN"}
   ],
   "require": {
     "php": ">=8.4",
-    "efrogg/content-renderer-storyblok": "^3.0.0",
+    "efrogg/content-renderer-storyblok": "^3.1.0",
     "psr/log": "*"
   },
   "require-dev": {
